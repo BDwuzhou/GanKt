@@ -2,6 +2,7 @@ package top.bdwuzhou.gankt.view
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import butterknife.BindView
@@ -14,8 +15,8 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import top.bdwuzhou.gankt.R
 import top.bdwuzhou.gankt.model.Constant
+import top.bdwuzhou.gankt.model.DayData
 import top.bdwuzhou.gankt.model.GankApi
-import top.bdwuzhou.gankt.model.GankData
 import top.bdwuzhou.gankt.model.Response
 
 class MainActivity : AppCompatActivity() {
@@ -39,12 +40,15 @@ class MainActivity : AppCompatActivity() {
 
         val gankApi = retrofit.create(GankApi::class.java)
 
-        gankApi.android(10, 1)
+        gankApi.day(2017, 1, 3)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ t: Response<List<GankData>>? -> mTvTest.text = t.toString() },
-                        { t: Throwable? ->
-                            Toast.makeText(this, t?.cause.toString(), Toast.LENGTH_SHORT).show() })
+                .subscribe({ t: Response<DayData>? ->
+                    mTvTest.text = t.toString()
+                }, { t: Throwable? ->
+                    Log.e("gankt", t?.cause.toString())
+                    Toast.makeText(this, t?.cause.toString(), Toast.LENGTH_SHORT).show()
+                })
     }
 
     override fun onDestroy() {

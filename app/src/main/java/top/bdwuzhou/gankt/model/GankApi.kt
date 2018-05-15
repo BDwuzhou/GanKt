@@ -51,7 +51,7 @@ interface GankApi {
      * 每日数据
      */
     @GET("day/{year}/{month}/{day}")
-    fun day(@Path("year") year: Int, @Path("month") month: Int, @Path("day") day: Int): Observable<Response<List<GankData>>>
+    fun day(@Path("year") year: Int, @Path("month") month: Int, @Path("day") day: Int): Observable<Response<DayData>>
 
     /**
      * 随机数据     福利 | Android | iOS | 休息视频 | 拓展资源 | 前端

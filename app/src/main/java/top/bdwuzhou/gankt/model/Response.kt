@@ -1,3 +1,3 @@
 package top.bdwuzhou.gankt.model
 
-data class Response<T>(var results: T, var error: Boolean)
+data class Response<T>(var error: Boolean, var results: T, var category: List<String>)
