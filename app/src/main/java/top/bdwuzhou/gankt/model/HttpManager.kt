@@ -7,12 +7,13 @@ import io.reactivex.schedulers.Schedulers
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import top.bdwuzhou.gankt.utils.BASE_URL
 
 object HttpManager {
     private val gankApi: GankApi = Retrofit.Builder()
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(Constant.BASE_URL)
+            .baseUrl(BASE_URL)
             .build()
             .create(GankApi::class.java)
 

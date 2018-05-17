@@ -26,11 +26,11 @@ class MainActivity : AppCompatActivity() {
         unbinder = ButterKnife.bind(this)
 
         HttpManager.welfare(10, 1)
-                .subscribe({ t: List<GankData> ->
+                .subscribe({ it: List<GankData> ->
                     mRvList.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-                    mRvList.adapter = MainAdapter(t)
+                    mRvList.adapter = MainAdapter(it)
                 },{
-                    t -> Log.e("testwuzhou", "=====>" + t.cause.toString())
+                    it -> Log.e("testwuzhou", "=====>" + it.cause.toString())
                 })
     }
 
