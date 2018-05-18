@@ -1,4 +1,4 @@
-package top.bdwuzhou.gankt.utils
+package top.bdwuzhou.gankt.util
 
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.module.AppGlideModule

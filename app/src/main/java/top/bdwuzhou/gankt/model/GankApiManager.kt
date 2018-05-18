@@ -7,9 +7,9 @@ import io.reactivex.schedulers.Schedulers
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import top.bdwuzhou.gankt.utils.BASE_URL
+import top.bdwuzhou.gankt.util.BASE_URL
 
-object HttpManager {
+object GankApiManager {
     private val gankApi: GankApi = Retrofit.Builder()
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
@@ -35,56 +35,56 @@ object HttpManager {
     /**
      * 福利
      */
-    fun welfare(count: Int, pageIndex: Int) = gankApi.welfare(count, pageIndex)
+    fun welfare(count: Int, pageIndex: Int): Observable<List<GankData>> = gankApi.welfare(count, pageIndex)
             .compose(applySchedule())
             .compose(applyMap())
 
     /**
      * Android
      */
-    fun android(count: Int, pageIndex: Int) = gankApi.android(count, pageIndex)
+    fun android(count: Int, pageIndex: Int): Observable<List<GankData>> = gankApi.android(count, pageIndex)
             .compose(applySchedule())
             .compose(applyMap())
 
     /**
      * iOS
      */
-    fun ios(count: Int, pageIndex: Int) = gankApi.ios(count, pageIndex)
+    fun ios(count: Int, pageIndex: Int): Observable<List<GankData>> = gankApi.ios(count, pageIndex)
             .compose(applySchedule())
             .compose(applyMap())
 
     /**
      * 休息视频
      */
-    fun restVideo(count: Int, pageIndex: Int) = gankApi.restVideo(count, pageIndex)
+    fun restVideo(count: Int, pageIndex: Int): Observable<List<GankData>> = gankApi.restVideo(count, pageIndex)
             .compose(applySchedule())
             .compose(applyMap())
 
     /**
      * 拓展资源
      */
-    fun expandRes(count: Int, pageIndex: Int) = gankApi.expandRes(count, pageIndex)
+    fun expandRes(count: Int, pageIndex: Int): Observable<List<GankData>> = gankApi.expandRes(count, pageIndex)
             .compose(applySchedule())
             .compose(applyMap())
 
     /**
      * 前端
      */
-    fun frontEndWeb(count: Int, pageIndex: Int) = gankApi.frontEndWeb(count, pageIndex)
+    fun frontEndWeb(count: Int, pageIndex: Int): Observable<List<GankData>> = gankApi.frontEndWeb(count, pageIndex)
             .compose(applySchedule())
             .compose(applyMap())
 
     /**
      * 所有
      */
-    fun all(count: Int, pageIndex: Int) = gankApi.all(count, pageIndex)
+    fun all(count: Int, pageIndex: Int): Observable<List<GankData>> = gankApi.all(count, pageIndex)
             .compose(applySchedule())
             .compose(applyMap())
 
     /**
      * 每日数据
      */
-    fun day(year: Int, month: Int, day: Int) = gankApi.day(year, month, day)
+    fun day(year: Int, month: Int, day: Int): Observable<DayData> = gankApi.day(year, month, day)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map { t -> t.results }
@@ -92,7 +92,7 @@ object HttpManager {
     /**
      * 随机
      */
-    fun random(kind: String, count: Int) = gankApi.random(kind, count)
+    fun random(kind: String, count: Int): Observable<List<GankData>> = gankApi.random(kind, count)
             .compose(applySchedule())
             .compose(applyMap())
 }

@@ -1,4 +1,4 @@
-package top.bdwuzhou.gankt.utils
+package top.bdwuzhou.gankt.util
 
 import android.app.Activity
 import android.app.Fragment

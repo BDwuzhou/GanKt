@@ -8,49 +8,49 @@ interface GankApi {
     /**
      * 福利
      */
-    @GET("mData/福利/{count}/{index}")
+    @GET("data/福利/{count}/{index}")
     fun welfare(@Path("count") count: Int,
                 @Path("index") pageIndex: Int): Observable<Response<List<GankData>>>
 
     /**
      * Android
      */
-    @GET("mData/Android/{count}/{index}")
+    @GET("data/Android/{count}/{index}")
     fun android(@Path("count") count: Int,
                 @Path("index") pageIndex: Int): Observable<Response<List<GankData>>>
 
     /**
      * iOS
      */
-    @GET("mData/iOS/{count}/{index}")
+    @GET("data/iOS/{count}/{index}")
     fun ios(@Path("count") count: Int,
             @Path("index") pageIndex: Int): Observable<Response<List<GankData>>>
 
     /**
      * 休息视频
      */
-    @GET("mData/休息视频/{count}/{index}")
+    @GET("data/休息视频/{count}/{index}")
     fun restVideo(@Path("count") count: Int,
                   @Path("index") pageIndex: Int): Observable<Response<List<GankData>>>
 
     /**
      * 拓展资源
      */
-    @GET("mData/拓展资源/{count}/{index}")
+    @GET("data/拓展资源/{count}/{index}")
     fun expandRes(@Path("count") count: Int,
                   @Path("index") pageIndex: Int): Observable<Response<List<GankData>>>
 
     /**
      * 前端
      */
-    @GET("mData/前端/{count}/{index}")
+    @GET("data/前端/{count}/{index}")
     fun frontEndWeb(@Path("count") count: Int,
                     @Path("index") pageIndex: Int): Observable<Response<List<GankData>>>
 
     /**
      * 所有
      */
-    @GET("mData/all/{count}/{index}")
+    @GET("data/all/{count}/{index}")
     fun all(@Path("count") count: Int,
             @Path("index") pageIndex: Int): Observable<Response<List<GankData>>>
 
@@ -65,7 +65,7 @@ interface GankApi {
     /**
      * 随机数据     福利 | Android | iOS | 休息视频 | 拓展资源 | 前端
      */
-    @GET("mData/{kind}/{count}")
+    @GET("data/{kind}/{count}")
     fun random(@Path("kind") kind: String,
                @Path("count") count: Int): Observable<Response<List<GankData>>>
 }
