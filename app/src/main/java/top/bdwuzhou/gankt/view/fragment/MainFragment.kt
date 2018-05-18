@@ -15,13 +15,13 @@ import top.bdwuzhou.gankt.R
 import top.bdwuzhou.gankt.model.GankApiManager
 import top.bdwuzhou.gankt.model.GankData
 import top.bdwuzhou.gankt.util.findViewById
-import top.bdwuzhou.gankt.view.adapter.MainAdapter
+import top.bdwuzhou.gankt.view.adapter.TestAdapter
 
 class MainFragment : Fragment() {
     //    private val mRvList: RecyclerView by bindView(R.id.rv_list)
 //    private val mRefresh: SwipeRefreshLayout by bindView(R.id.refresh)
     private var columnCount = 1
-    private lateinit var mainAdapter: MainAdapter
+    private lateinit var mainAdapter: TestAdapter
     private lateinit var mRvList: RecyclerView
     private lateinit var mRefresher: SwipeRefreshLayout
 
@@ -44,7 +44,7 @@ class MainFragment : Fragment() {
 
     //初始化 View
     private fun initView() {
-        mainAdapter = MainAdapter()
+        mainAdapter = TestAdapter()
         with(mRvList) {
             layoutManager = when {
                 columnCount <= 1 -> LinearLayoutManager(context)
