@@ -1,5 +1,6 @@
 package top.bdwuzhou.gankt.view.fragment
 
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
@@ -11,19 +12,24 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import top.bdwuzhou.gankt.R
 import top.bdwuzhou.gankt.model.GankApiManager
 import top.bdwuzhou.gankt.model.GankData
+import top.bdwuzhou.gankt.util.GlideApp
 import top.bdwuzhou.gankt.util.findViewById
-import top.bdwuzhou.gankt.view.adapter.TestAdapter
+import top.bdwuzhou.gankt.view.adapter.AutoLoadMoreAdapter
 
 class MainFragment : Fragment() {
     //    private val mRvList: RecyclerView by bindView(R.id.rv_list)
 //    private val mRefresh: SwipeRefreshLayout by bindView(R.id.refresh)
     private var columnCount = 1
-    private lateinit var mainAdapter: TestAdapter
+    //    private lateinit var mMainAdapter: MainAdapter
+    private lateinit var mMainAdapter: AutoLoadMoreAdapter<GankData>
     private lateinit var mRvList: RecyclerView
     private lateinit var mRefresher: SwipeRefreshLayout
+    private var countPerPage: Int = 20
+    private var pageIndex: Int = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,30 +44,68 @@ class MainFragment : Fragment() {
         mRvList = view findViewById R.id.rv_list
         mRefresher = view findViewById R.id.refresh
         initView()
-        loadData()
+        loadData(countPerPage, pageIndex)
         return view
     }
 
     //初始化 View
     private fun initView() {
-        mainAdapter = TestAdapter()
+        mMainAdapter = object : AutoLoadMoreAdapter<GankData>(R.layout.item_list_main) {
+            override fun itemsTheSame(oldItem: GankData, newItem: GankData): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun contentsTheSame(oldItem: GankData, newItem: GankData): Boolean {
+                return oldItem.id == newItem.id && oldItem.url == newItem.url
+            }
+
+            override fun bindHolder(holder: ViewHolder, item: GankData, position: Int) {
+                GlideApp.with(this@MainFragment)
+                        .load(item.url)
+                        .placeholder(R.mipmap.ic_launcher_round)
+                        .into(holder.getImageView(R.id.iv_item))
+                holder.getTextView(R.id.tv_desc).text = item.desc
+                holder.getTextView(R.id.tv_desc).setOnClickListener({ view ->
+                    Toast.makeText(this@MainFragment.context, "${view.id}", Toast.LENGTH_SHORT).show()
+                })
+            }
+        }
+        with(mMainAdapter) {
+            //给recyclerView设置adapter
+            this attachToRecyclerView mRvList
+            //自动加载
+            loadMore = object : AutoLoadMoreAdapter.LoadMore {
+                override fun load() {
+                    loadData(countPerPage, ++pageIndex)
+                }
+            }
+            //item点击事件
+            onItemClickListener = object : AutoLoadMoreAdapter.OnItemClickListener<GankData> {
+                override fun onItemClick(view: View, item: GankData, position: Int) {
+                    Toast.makeText(view.context, "$position", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        //对mRvList连续调用一系列方法
         with(mRvList) {
             layoutManager = when {
                 columnCount <= 1 -> LinearLayoutManager(context)
                 else -> GridLayoutManager(context, columnCount)
             }
-            adapter = mainAdapter
             itemAnimator = DefaultItemAnimator()
         }
-        mRefresher.setOnRefreshListener { loadData() }
+        with(mRefresher) {
+            setColorSchemeColors(Color.RED, Color.YELLOW, Color.BLUE)
+            setOnRefreshListener { loadData(countPerPage, pageIndex) }
+        }
     }
 
     //加载数据
-    private fun loadData() {
-        GankApiManager.welfare(20, 1)
+    private fun loadData(countL: Int, index: Int) {
+        GankApiManager.welfare(countL, index)
                 .doOnSubscribe { mRefresher.isRefreshing = true }
                 .subscribe({ it: List<GankData> ->
-                    mainAdapter.data = it
+                    mMainAdapter.data = it
                     mRefresher.isRefreshing = false
                 }, { it ->
                     Log.e("testwuzhou", "=====>" + it.toString())
