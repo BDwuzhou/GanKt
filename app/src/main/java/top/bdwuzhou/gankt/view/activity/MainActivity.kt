@@ -7,16 +7,17 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import top.bdwuzhou.gankt.R
+import top.bdwuzhou.gankt.util.toast
 import top.bdwuzhou.gankt.view.fragment.MainFragment
 import top.bdwuzhou.gankt.view.fragment.OtherFragment
 import top.bdwuzhou.gankt.view.fragment.callback.OnFragmentInteractionListener
 
-class MainActivity : AppCompatActivity(), OnFragmentInteractionListener{
+class MainActivity : AppCompatActivity(), OnFragmentInteractionListener {
 
     private lateinit var mOnNavigationItemSelectedListener: BottomNavigationView.OnNavigationItemSelectedListener
+    private var lastBackPressTime: Long = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,16 +69,25 @@ class MainActivity : AppCompatActivity(), OnFragmentInteractionListener{
         mVpContainer.adapter = object : FragmentPagerAdapter(supportFragmentManager) {
             override fun getCount(): Int = 3
 
-            override fun getItem(position: Int): Fragment {
-                return when (position) {
-                    0 -> MainFragment.newInstance(2)
-                    else -> OtherFragment.newInstance("", "")
-                }
+            override fun getItem(position: Int): Fragment = when (position) {
+                0 -> MainFragment.newInstance(2)
+                else -> OtherFragment.newInstance("", "")
             }
         }
     }
 
     override fun onFragmentInteraction(uri: Uri) {
-        Toast.makeText(this, uri.toString(), Toast.LENGTH_SHORT).show()
+        toast(uri.toString())
+    }
+
+    override fun onBackPressed() {
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastBackPressTime > 2000) {
+            toast("再按一次退出程序")
+            lastBackPressTime = currentTime
+            return
+        }
+        finish()
+        super.onBackPressed()
     }
 }

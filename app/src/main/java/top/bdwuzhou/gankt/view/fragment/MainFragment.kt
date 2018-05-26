@@ -8,7 +8,6 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +17,8 @@ import top.bdwuzhou.gankt.model.GankApiManager
 import top.bdwuzhou.gankt.model.GankData
 import top.bdwuzhou.gankt.util.GlideApp
 import top.bdwuzhou.gankt.util.findViewById
+import top.bdwuzhou.gankt.util.logE
+import top.bdwuzhou.gankt.util.toast
 import top.bdwuzhou.gankt.view.adapter.AutoLoadMoreAdapter
 
 class MainFragment : Fragment() {
@@ -28,7 +29,7 @@ class MainFragment : Fragment() {
     private lateinit var mMainAdapter: AutoLoadMoreAdapter<GankData>
     private lateinit var mRvList: RecyclerView
     private lateinit var mRefresher: SwipeRefreshLayout
-    private var countPerPage: Int = 20
+    private val countPerPage: Int = 20
     private var pageIndex: Int = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,6 +84,10 @@ class MainFragment : Fragment() {
             onItemClickListener = object : AutoLoadMoreAdapter.OnItemClickListener<GankData> {
                 override fun onItemClick(view: View, item: GankData, position: Int) {
                     Toast.makeText(view.context, "$position", Toast.LENGTH_SHORT).show()
+
+                    this@MainFragment.context?.let { "$position".toast(it) }
+                    "$position".toast(this@MainFragment)
+                    toast("$position")
                 }
             }
         }
@@ -96,19 +101,23 @@ class MainFragment : Fragment() {
         }
         with(mRefresher) {
             setColorSchemeColors(Color.RED, Color.YELLOW, Color.BLUE)
-            setOnRefreshListener { loadData(countPerPage, pageIndex) }
+            setOnRefreshListener { loadData(countPerPage, 1) }
         }
     }
 
     //加载数据
-    private fun loadData(countL: Int, index: Int) {
-        GankApiManager.welfare(countL, index)
+    private fun loadData(count: Int, index: Int) {
+        GankApiManager.welfare(count, index)
                 .doOnSubscribe { mRefresher.isRefreshing = true }
                 .subscribe({ it: List<GankData> ->
-                    mMainAdapter.data = it
+                    if (index == 1) {
+                        mMainAdapter flushData it.toMutableList()
+                    } else {
+                        mMainAdapter updateData it.toMutableList()
+                    }
                     mRefresher.isRefreshing = false
                 }, { it ->
-                    Log.e("testwuzhou", "=====>" + it.toString())
+                    logE("testwuzhou", "=====>$it")
                 })
     }
 

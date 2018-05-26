@@ -18,10 +18,9 @@ abstract class AutoLoadMoreAdapter<T>(@LayoutRes private val layoutId: Int) :
         RecyclerView.Adapter<AutoLoadMoreAdapter<T>.ViewHolder>() {
     var loadMore: LoadMore? = null
     var onItemClickListener: OnItemClickListener<T>? = null
-    var data: List<T> = arrayListOf()
+    var data: MutableList<T> = mutableListOf()
         set(value) = if (!data.isEmpty()) {
-            field = value
-            DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
                 override fun getOldListSize(): Int = data.size
 
                 override fun getNewListSize(): Int = value.size
@@ -34,11 +33,23 @@ abstract class AutoLoadMoreAdapter<T>(@LayoutRes private val layoutId: Int) :
                     return contentsTheSame(data[oldItemPosition], value[newItemPosition])
                 }
 
-            }).dispatchUpdatesTo(this)
+            })
+            field.addAll(value)
+            diffResult.dispatchUpdatesTo(this)
         } else {
             field = value
             notifyItemRangeInserted(0, data.size)
         }
+
+    infix fun flushData(data: List<T>) {
+        this.data = data.toMutableList()
+        notifyDataSetChanged()
+    }
+
+    infix fun updateData(data: List<T>) {
+        this.data.addAll(data)
+        notifyItemRangeInserted(this.data.size, this.data.size + data.size)
+    }
 
     override fun getItemCount(): Int = data.size
 
