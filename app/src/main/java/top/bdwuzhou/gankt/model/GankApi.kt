@@ -1,8 +1,8 @@
 package top.bdwuzhou.gankt.model
 
 import io.reactivex.Observable
-import retrofit2.http.GET
-import retrofit2.http.Path
+import okhttp3.ResponseBody
+import retrofit2.http.*
 
 interface GankApi {
     /**
@@ -68,4 +68,20 @@ interface GankApi {
     @GET("data/{kind}/{count}")
     fun random(@Path("kind") kind: String,
                @Path("count") count: Int): Observable<Response<List<GankData>>>
+
+    /**
+     * @param appId app_id
+     * @param timeStamp 秒级时间戳
+     * @param nonceStr 随机字符串，非空且长度上限32字节
+     * @param image 待识别图片，base64编码，支持JPG、PNG、BMP，大小不超过1MB
+     * @param mode 检测模式，0-正常 1-大脸模式（默认1）
+     */
+    @FormUrlEncoded
+    @POST("https://api.ai.qq.com/fcgi-bin/face/face_detectface")
+    fun faceDetection(@Field("app_id") appId: Int,
+                      @Field("time_stamp") timeStamp: Int,
+                      @Field("nonce_Str") nonceStr: String,
+                      @Field("sign") sign: String,
+                      @Field("image") image: String,
+                      @Field("mode") mode: Int): Observable<ResponseBody>
 }

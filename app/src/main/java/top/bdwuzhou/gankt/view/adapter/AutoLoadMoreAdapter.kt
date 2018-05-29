@@ -42,13 +42,14 @@ abstract class AutoLoadMoreAdapter<T>(@LayoutRes private val layoutId: Int) :
         }
 
     infix fun flushData(data: List<T>) {
+        this.data.clear()
         this.data = data.toMutableList()
         notifyDataSetChanged()
     }
 
     infix fun updateData(data: List<T>) {
         this.data.addAll(data)
-        notifyItemRangeInserted(this.data.size, this.data.size + data.size)
+        notifyItemRangeInserted(this.data.size, this.data.size)
     }
 
     override fun getItemCount(): Int = data.size

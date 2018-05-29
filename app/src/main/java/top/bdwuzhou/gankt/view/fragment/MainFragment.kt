@@ -65,6 +65,30 @@ class MainFragment : Fragment() {
                         .load(item.url)
                         .placeholder(R.mipmap.ic_launcher_round)
                         .into(holder.getImageView(R.id.iv_item))
+
+//                Glide.with(this@MainFragment)
+//                        .asBitmap()
+//                        .load(item.url)
+//                        .into(object : SimpleTarget<Bitmap>() {
+//                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+//                                holder.getImageView(R.id.iv_item).setImageBitmap(resource)
+//                                val timeStamp = (System.currentTimeMillis() / 1000).toInt()
+//                                Runnable {
+//                                    val sign = getRequestSign(mapOf("app_id" to "1106861143",
+//                                            "time_stamp" to "$timeStamp",
+//                                            "nonce_str" to "wuzhou",
+//                                            "image" to bitmapToBase64(resource),
+//                                            "mode" to "0"))
+//                                    GankApiManager.faceDetection(timeStamp, "wuzhou", sign, "", 0)
+//                                            .subscribe({ response ->
+//                                                logE(msg = response.toString())
+//                                            }, { e ->
+//                                                logE(msg = e.cause.toString())
+//                                            })
+//                                }.run()
+//                            }
+//                        })
+
                 holder.getTextView(R.id.tv_desc).text = item.desc
                 holder.getTextView(R.id.tv_desc).setOnClickListener({ view ->
                     Toast.makeText(this@MainFragment.context, "${view.id}", Toast.LENGTH_SHORT).show()
@@ -101,7 +125,7 @@ class MainFragment : Fragment() {
         }
         with(mRefresher) {
             setColorSchemeColors(Color.RED, Color.YELLOW, Color.BLUE)
-            setOnRefreshListener { loadData(countPerPage, 1) }
+            setOnRefreshListener { loadData(countPerPage, pageIndex.apply { pageIndex = 1 }) }
         }
     }
 
@@ -111,13 +135,14 @@ class MainFragment : Fragment() {
                 .doOnSubscribe { mRefresher.isRefreshing = true }
                 .subscribe({ it: List<GankData> ->
                     if (index == 1) {
-                        mMainAdapter flushData it.toMutableList()
+                        mMainAdapter flushData it
                     } else {
-                        mMainAdapter updateData it.toMutableList()
+                        mMainAdapter updateData it
                     }
                     mRefresher.isRefreshing = false
                 }, { it ->
                     logE("testwuzhou", "=====>$it")
+                    mRefresher.isRefreshing = false
                 })
     }
 

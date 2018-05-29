@@ -4,6 +4,7 @@ import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import okhttp3.ResponseBody
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -95,4 +96,12 @@ object GankApiManager {
     fun random(kind: String, count: Int): Observable<List<GankData>> = gankApi.random(kind, count)
             .compose(applySchedule())
             .compose(applyMap())
+
+    /**
+     * 人脸检测
+     */
+    fun faceDetection(timeStamp: Int, nonceStr: String, sign: String, image: String, mode: Int): Observable<ResponseBody> =
+            gankApi.faceDetection(1106861143, timeStamp, nonceStr, sign, image, mode)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
 }
